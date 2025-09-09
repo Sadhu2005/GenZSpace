@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'login_screen.dart';
 import '../models/user_model.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -70,6 +71,8 @@ class ProfileScreen extends StatelessWidget {
                 color: Colors.grey[600],
               ),
             ),
+            const SizedBox(height: 8.0),
+            AlumniBadge(), // Alumni badge widget
             const SizedBox(height: 24.0),
             const Divider(),
             const SizedBox(height: 16.0),
@@ -133,7 +136,7 @@ class ProfileScreen extends StatelessWidget {
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const LoginScreen(),
+                    builder: (context) => LoginScreen(), // Removed const
                   ),
                   (route) => false,
                 );
@@ -143,6 +146,63 @@ class ProfileScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class AlumniBadge extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.blueGrey,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: const Text(
+        'Alumni',
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+}
+
+class FeedbackWallScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Feedback Wall')),
+      body: Center(child: Text('Feedback Wall Feature Coming Soon!')),
+    );
+  }
+}
+
+class SkillShowcaseScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Skill Showcase')),
+      body: Center(child: Text('Skill Showcase Feature Coming Soon!')),
+    );
+  }
+}
+
+class MarketplaceScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Marketplace')),
+      body: Center(child: Text('Marketplace Feature Coming Soon!')),
+    );
+  }
+}
+
+class LeaderboardScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('College Leaderboard')),
+      body: Center(child: Text('Leaderboard Feature Coming Soon!')),
     );
   }
 }

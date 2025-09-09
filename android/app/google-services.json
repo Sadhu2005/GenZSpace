@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "327260836837",
+    "project_id": "yuvaspace-d3025",
+    "storage_bucket": "yuvaspace-d3025.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:327260836837:android:80012f4852a3879917d50c",
+        "android_client_info": {
+          "package_name": "com.yuvaspace.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOitPjulOZH1NbO9swKfMSJi5WqNrEyPw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

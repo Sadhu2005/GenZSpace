@@ -51,3 +51,22 @@ class AuthService {
     await _auth.signOut();
   }
 }
+
+class StudentVerificationService {
+  Future<bool> verifyStudent(String collegeId, String phoneNumber, String otp) async {
+    // TODO: Implement actual verification logic with backend
+    // For now, return true for demo
+    return true;
+  }
+}
+
+class PrivacyService {
+  bool isStudentVerified(UserModel user) {
+    // TODO: Implement actual verification logic
+    return user.collegeId.isNotEmpty;
+  }
+  bool canViewProfile(UserModel viewer, UserModel profileOwner) {
+    // TODO: Implement privacy logic
+    return isStudentVerified(viewer);
+  }
+}

@@ -1,3 +1,8 @@
+class FeedType {
+  static const String fun = 'Fun';
+  static const String academic = 'Academic';
+}
+
 class PostModel {
   final String id;
   final String userId;
@@ -10,6 +15,7 @@ class PostModel {
   final int likes;
   final List<String> likedBy;
   final List<Comment> comments;
+  final String feedType;
 
   PostModel({
     required this.id,
@@ -23,6 +29,7 @@ class PostModel {
     this.likes = 0,
     this.likedBy = const [],
     this.comments = const [],
+    required this.feedType,
   });
 
   Map<String, dynamic> toMap() {
@@ -38,6 +45,7 @@ class PostModel {
       'likes': likes,
       'likedBy': likedBy,
       'comments': comments.map((comment) => comment.toMap()).toList(),
+      'feedType': feedType,
     };
   }
 
@@ -55,6 +63,7 @@ class PostModel {
       likedBy: List<String>.from(map['likedBy'] ?? []),
       comments: List<Comment>.from(
           map['comments']?.map((x) => Comment.fromMap(x)) ?? []),
+      feedType: map['feedType'],
     );
   }
 }

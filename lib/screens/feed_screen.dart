@@ -18,6 +18,7 @@ class FeedScreen extends StatelessWidget {
         timestamp: DateTime.now().subtract(const Duration(hours: 2)),
         isAcademic: false,
         likes: 15,
+        feedType: FeedType.fun,
       ),
       PostModel(
         id: '2',
@@ -28,6 +29,7 @@ class FeedScreen extends StatelessWidget {
         timestamp: DateTime.now().subtract(const Duration(hours: 5)),
         isAcademic: false,
         likes: 42,
+        feedType: FeedType.fun,
       ),
     ];
 
