@@ -3,6 +3,9 @@ import 'feed_screen.dart';
 import 'academic_feed_screen.dart';
 import 'search_screen.dart';
 import 'profile_screen.dart';
+import 'my_vibes_screen.dart';
+import 'study_chat_screen.dart';
+import 'study_swap_screen.dart';
 import '../widgets/bottom_nav_bar.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -17,6 +20,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _screens = [
     const FeedScreen(),
+    const MyVibesScreen(),
+    const StudyChatScreen(),
+    const StudySwapScreen(),
     const AcademicFeedScreen(),
     const SearchScreen(),
     const ProfileScreen(),

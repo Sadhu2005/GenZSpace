@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "327260836837",
-    "project_id": "yuvaspace-d3025",
-    "storage_bucket": "yuvaspace-d3025.firebasestorage.app"
+    "project_number": "839050117776",
+    "project_id": "genzspace",
+    "storage_bucket": "genzspace.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:327260836837:android:80012f4852a3879917d50c",
+        "mobilesdk_app_id": "1:839050117776:android:ceadd7043e4cc3aafbce15",
         "android_client_info": {
-          "package_name": "com.yuvaspace.app"
+          "package_name": "com.anu.GenZSpace"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAOitPjulOZH1NbO9swKfMSJi5WqNrEyPw"
+          "current_key": "AIzaSyDgw_X77NQkAaq5IQonYmbo5ExnUfXmPEI"
         }
       ],
       "services": {

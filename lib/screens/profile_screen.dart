@@ -20,6 +20,7 @@ class ProfileScreen extends StatelessWidget {
       interests: ['Coding', 'Gaming', 'Music'],
       instagram: '@rahulsharma',
       linkedin: 'linkedin.com/in/rahulsharma',
+      joinedAt: DateTime.now().subtract(const Duration(days: 30)),
     );
 
     return Scaffold(

@@ -55,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.lightBackground,
+      backgroundColor: AppTheme.primaryColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20.0),
@@ -68,30 +68,35 @@ class _LoginScreenState extends State<LoginScreen>
                   opacity: _fadeAnimation,
                   child: Column(
                     children: [
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: AppTheme.primaryColor,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: const Icon(
-                          Icons.school,
-                          size: 40,
+                      // Main logo text
+                      Text(
+                        'GenZSpace',
+                        style: TextStyle(
+                          fontSize: 42,
+                          fontWeight: FontWeight.w900,
                           color: Colors.white,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      // Tagline
+                      Text(
+                        'Connect.Share.Grow',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white.withOpacity(0.8),
+                          letterSpacing: 1.2,
                         ),
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        'YuvaSpace',
-                        style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                              color: AppTheme.primaryColor,
-                            ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'The Student-Only Social Network',
-                        style: Theme.of(context).textTheme.bodyLarge,
+                        'Student-Only Social Network',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.9),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
                     ],
                   ),
@@ -144,7 +149,10 @@ class _LoginScreenState extends State<LoginScreen>
                       Text(
                         'By continuing, you agree to our Terms of Service and Privacy Policy',
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyMedium,
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.7),
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),

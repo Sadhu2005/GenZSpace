@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   static const Color primaryColor = Color(0xFF4361EE);
@@ -12,11 +13,17 @@ class AppTheme {
   static ThemeData lightTheme = ThemeData(
     primaryColor: primaryColor,
     scaffoldBackgroundColor: lightBackground,
-    appBarTheme: const AppBarTheme(
+    fontFamily: GoogleFonts.inter().fontFamily,
+    appBarTheme: AppBarTheme(
       backgroundColor: primaryColor,
       foregroundColor: Colors.white,
       elevation: 0,
-      iconTheme: IconThemeData(color: Colors.white),
+      iconTheme: const IconThemeData(color: Colors.white),
+      titleTextStyle: GoogleFonts.inter(
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        color: Colors.white,
+      ),
     ),
     colorScheme: const ColorScheme.light(
       primary: primaryColor,
@@ -40,24 +47,28 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
         ),
         padding: const EdgeInsets.symmetric(vertical: 16),
+        textStyle: GoogleFonts.inter(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     ),
-    textTheme: const TextTheme(
-      displayLarge: TextStyle(
+    textTheme: GoogleFonts.interTextTheme().copyWith(
+      displayLarge: GoogleFonts.inter(
         fontSize: 28,
         fontWeight: FontWeight.bold,
         color: Colors.black,
       ),
-      displayMedium: TextStyle(
+      displayMedium: GoogleFonts.inter(
         fontSize: 24,
         fontWeight: FontWeight.w600,
         color: Colors.black,
       ),
-      bodyLarge: TextStyle(
+      bodyLarge: GoogleFonts.inter(
         fontSize: 16,
         color: Colors.black87,
       ),
-      bodyMedium: TextStyle(
+      bodyMedium: GoogleFonts.inter(
         fontSize: 14,
         color: Colors.black54,
       ),
@@ -67,11 +78,17 @@ class AppTheme {
   static ThemeData darkTheme = ThemeData(
     primaryColor: primaryColor,
     scaffoldBackgroundColor: darkBackground,
-    appBarTheme: const AppBarTheme(
+    fontFamily: GoogleFonts.inter().fontFamily,
+    appBarTheme: AppBarTheme(
       backgroundColor: darkBackground,
       foregroundColor: Colors.white,
       elevation: 0,
-      iconTheme: IconThemeData(color: Colors.white),
+      iconTheme: const IconThemeData(color: Colors.white),
+      titleTextStyle: GoogleFonts.inter(
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        color: Colors.white,
+      ),
     ),
     colorScheme: const ColorScheme.dark(
       primary: primaryColor,
@@ -87,22 +104,36 @@ class AppTheme {
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     ),
-    textTheme: const TextTheme(
-      displayLarge: TextStyle(
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: primaryColor,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        textStyle: GoogleFonts.inter(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    ),
+    textTheme: GoogleFonts.interTextTheme().copyWith(
+      displayLarge: GoogleFonts.inter(
         fontSize: 28,
         fontWeight: FontWeight.bold,
         color: Colors.white,
       ),
-      displayMedium: TextStyle(
+      displayMedium: GoogleFonts.inter(
         fontSize: 24,
         fontWeight: FontWeight.w600,
         color: Colors.white,
       ),
-      bodyLarge: TextStyle(
+      bodyLarge: GoogleFonts.inter(
         fontSize: 16,
         color: Colors.white70,
       ),
-      bodyMedium: TextStyle(
+      bodyMedium: GoogleFonts.inter(
         fontSize: 14,
         color: Colors.white60,
       ),

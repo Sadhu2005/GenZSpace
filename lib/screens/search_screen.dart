@@ -24,6 +24,7 @@ class _SearchScreenState extends State<SearchScreen> {
       branch: 'Computer Science',
       year: 3,
       interests: ['Coding', 'Gaming', 'Music'],
+      joinedAt: DateTime.now().subtract(const Duration(days: 30)),
     ),
     UserModel(
       uid: 'user2',
@@ -35,6 +36,7 @@ class _SearchScreenState extends State<SearchScreen> {
       branch: 'Electronics',
       year: 2,
       interests: ['Dancing', 'Photography', 'Art'],
+      joinedAt: DateTime.now().subtract(const Duration(days: 25)),
     ),
     UserModel(
       uid: 'user3',
@@ -46,6 +48,7 @@ class _SearchScreenState extends State<SearchScreen> {
       branch: 'Mechanical',
       year: 4,
       interests: ['Sports', 'Reading', 'Traveling'],
+      joinedAt: DateTime.now().subtract(const Duration(days: 20)),
     ),
   ];
 
