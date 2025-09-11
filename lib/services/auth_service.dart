@@ -1,6 +1,7 @@
 // import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user_model.dart';
+import '../config/app_config.dart';
 
 class AuthService {
   // final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -9,7 +10,12 @@ class AuthService {
   // Sign in with phone number
   Future<void> signInWithPhone(String phoneNumber) async {
     // TODO: Implement Firebase phone authentication
-    print('Phone authentication for: $phoneNumber');
+    if (AppConfig.isFirebaseConfigured) {
+      print('Phone authentication for: $phoneNumber');
+      // Firebase phone auth implementation will go here
+    } else {
+      print('⚠️ Firebase not configured. Using mock authentication.');
+    }
   }
 
   // Verify OTP

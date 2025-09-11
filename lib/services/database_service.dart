@@ -1,6 +1,7 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/post_model.dart';
 import '../models/user_model.dart';
+import '../config/app_config.dart';
 
 class DatabaseService {
   // final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -8,7 +9,12 @@ class DatabaseService {
   // Create a new post
   Future<void> createPost(PostModel post) async {
     // TODO: Implement Firebase post creation
-    print('Creating post: ${post.content}');
+    if (AppConfig.isFirebaseConfigured) {
+      print('Creating post: ${post.content}');
+      // Firebase post creation will go here
+    } else {
+      print('⚠️ Firebase not configured. Using mock database.');
+    }
   }
 
   // Get all posts

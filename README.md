@@ -160,20 +160,44 @@ lib/
    cd genzspace
    ```
 
-2. **Install dependencies**
+2. **Environment Setup**
+   
+   **Windows:**
+   ```bash
+   setup_env.bat
+   ```
+   
+   **Linux/Mac:**
+   ```bash
+   chmod +x setup_env.sh
+   ./setup_env.sh
+   ```
+
+3. **Configure Environment Variables**
+   - Edit `.env` file with your Firebase credentials
+   - Edit `lib/config/secrets.dart` with your actual values
+   - **Never commit these files to Git!**
+
+4. **Install dependencies**
    ```bash
    flutter pub get
    ```
 
-3. **Configure Firebase**
-   - Add your `google-services.json` (Android)
-   - Add your `GoogleService-Info.plist` (iOS)
-   - Update Firebase configuration
+5. **Configure Firebase**
+   - Download `google-services.json` from Firebase Console
+   - Place it in `android/app/google-services.json`
+   - Download `GoogleService-Info.plist` from Firebase Console
+   - Place it in `ios/Runner/GoogleService-Info.plist`
 
-4. **Run the app**
+6. **Run the app**
    ```bash
    flutter run
    ```
+
+### 🔐 **Security Setup**
+- See `SECURITY.md` for detailed security guidelines
+- Environment variables are automatically ignored by Git
+- Use different credentials for development and production
 
 ### 🔥 **Firebase Setup**
 
@@ -273,7 +297,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Contact
 
-- **Project Lead**: [Your Name](mailto:your.email@example.com)
+- **Project Lead**: [ Sadhu J](mailto:sadhuj2005@gmail.com)
 - **Website**: [genzspace.com](https://genzspace.com)
 - **Twitter**: [@GenZSpace](https://twitter.com/genzspace)
 - **Discord**: [Join our community](https://discord.gg/genzspace)

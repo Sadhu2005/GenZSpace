@@ -5,11 +5,9 @@
 *.swp
 .DS_Store
 .atom/
-.build/
 .buildlog/
 .history
 .svn/
-.swiftpm/
 migrate_working_dir/
 
 # IntelliJ related
@@ -27,11 +25,12 @@ migrate_working_dir/
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
+.flutter-plugins
 .flutter-plugins-dependencies
+.packages
 .pub-cache/
 .pub/
 /build/
-/coverage/
 
 # Symbolication related
 app.*.symbols
@@ -43,3 +42,83 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Environment Variables & Credentials
+.env
+.env.local
+.env.production
+.env.staging
+*.env
+
+# Firebase & Google Services
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+ios/firebase_app_id_file.json
+ios/Runner/GoogleService-Info.plist
+
+# API Keys & Secrets
+secrets/
+credentials/
+config/secrets.dart
+lib/config/secrets.dart
+
+# Local Configuration
+local.properties
+android/local.properties
+
+# Build files
+build/
+android/app/build/
+ios/build/
+web/build/
+linux/build/
+macos/build/
+windows/build/
+
+# Generated files
+*.g.dart
+*.freezed.dart
+*.config.dart
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node modules (if using any web tools)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Coverage
+coverage/
+*.lcov
+
+# Test files
+test_driver/
+integration_test/
+
+# FVM
+.fvm/
