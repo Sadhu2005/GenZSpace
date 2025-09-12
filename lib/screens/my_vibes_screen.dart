@@ -91,7 +91,7 @@ class _MyVibesScreenState extends State<MyVibesScreen>
         userId: 'user1',
         userName: 'Rahul Sharma',
         userProfileImage: '',
-        content: 'Just finished my coding session! 💻✨',
+        content: 'Just finished my coding session! 💻✨\n\nFinally solved that tricky algorithm problem. Feeling accomplished!',
         imageUrl: 'https://picsum.photos/300/400?random=1',
         createdAt: DateTime.now().subtract(const Duration(hours: 2)),
         expiresAt: DateTime.now().add(const Duration(hours: 22)),
@@ -102,7 +102,7 @@ class _MyVibesScreenState extends State<MyVibesScreen>
         userId: 'user2',
         userName: 'Priya Patel',
         userProfileImage: '',
-        content: 'Study vibes only! 📚',
+        content: 'Study vibes only! 📚\n\nMidnight study session with coffee and determination. Who else is burning the midnight oil?',
         createdAt: DateTime.now().subtract(const Duration(hours: 4)),
         expiresAt: DateTime.now().add(const Duration(hours: 20)),
         vibeType: 'text',
@@ -112,20 +112,44 @@ class _MyVibesScreenState extends State<MyVibesScreen>
         userId: 'user3',
         userName: 'Amit Kumar',
         userProfileImage: '',
-        content: 'Campus sunset vibes 🌅',
+        content: 'Campus sunset vibes 🌅\n\nSometimes you need to pause and appreciate the beauty around you. Nature is the best therapy!',
         imageUrl: 'https://picsum.photos/300/400?random=2',
         createdAt: DateTime.now().subtract(const Duration(hours: 6)),
         expiresAt: DateTime.now().add(const Duration(hours: 18)),
         vibeType: 'image',
       ),
+      MyVibe(
+        id: '4',
+        userId: 'user4',
+        userName: 'Sneha Reddy',
+        userProfileImage: '',
+        content: 'Project presentation day! 🎯\n\nNervous but excited to showcase our work. Wish me luck!',
+        imageUrl: 'https://picsum.photos/300/400?random=3',
+        createdAt: DateTime.now().subtract(const Duration(hours: 8)),
+        expiresAt: DateTime.now().add(const Duration(hours: 16)),
+        vibeType: 'image',
+      ),
+      MyVibe(
+        id: '5',
+        userId: 'user5',
+        userName: 'Vikram Singh',
+        userProfileImage: '',
+        content: 'Hackathon prep mode activated! 🚀\n\n48 hours of pure coding energy. Let\'s build something amazing!',
+        createdAt: DateTime.now().subtract(const Duration(hours: 10)),
+        expiresAt: DateTime.now().add(const Duration(hours: 14)),
+        vibeType: 'text',
+      ),
     ];
 
     return Column(
       children: [
+        // Stories section at top
+        _buildStoriesSection(),
+        const SizedBox(height: 20),
         // Add your vibe section
         _buildAddYourVibe(),
         const SizedBox(height: 20),
-        // Stories section
+        // Recent vibes section
         Expanded(
           child: AnimationLimiter(
             child: ListView.builder(
@@ -151,6 +175,91 @@ class _MyVibesScreenState extends State<MyVibesScreen>
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildStoriesSection() {
+    return Container(
+      height: 120,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: 8,
+        itemBuilder: (context, index) {
+          return _buildStoryItem(index);
+        },
+      ),
+    );
+  }
+
+  Widget _buildStoryItem(int index) {
+    final isAddStory = index == 0;
+    final colors = [
+      const Color(0xFF8A2BE2), // Purple
+      const Color(0xFFFF69B4), // Pink
+      const Color(0xFFFF8C00), // Orange
+      const Color(0xFF00BFFF), // Blue
+      const Color(0xFF4CC9F0), // Cyan
+      const Color(0xFFF72585), // Magenta
+      const Color(0xFF7209B7), // Deep Purple
+    ];
+    
+    return Container(
+      width: 80,
+      margin: const EdgeInsets.only(right: 12),
+      child: Column(
+        children: [
+          GestureDetector(
+            onTap: () {
+              if (isAddStory) {
+                _showAddVibeDialog();
+              } else {
+                // View story
+              }
+            },
+            child: Container(
+              width: 70,
+              height: 70,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: isAddStory ? null : LinearGradient(
+                  colors: [colors[index % colors.length], colors[index % colors.length].withOpacity(0.7)],
+                ),
+                color: isAddStory ? Colors.grey[800] : null,
+                border: Border.all(
+                  color: isAddStory ? Colors.grey[600]! : Colors.transparent,
+                  width: 2,
+                ),
+                boxShadow: isAddStory ? null : [
+                  BoxShadow(
+                    color: colors[index % colors.length].withOpacity(0.3),
+                    blurRadius: 8,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              child: Icon(
+                isAddStory ? Icons.add : Icons.person,
+                color: isAddStory ? Colors.grey[400] : Colors.white,
+                size: isAddStory ? 28 : 32,
+              ),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            isAddStory ? 'Your Story' : 'User ${index}',
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.7),
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
     );
   }
 
