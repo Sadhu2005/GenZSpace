@@ -51,8 +51,8 @@ class _BootScreenState extends State<BootScreen>
         _bootingComplete = true;
       });
       
-      // Skip update check for now to avoid potential issues
-      // UpdateService.checkForUpdates(context);
+      // Check for updates
+      UpdateService.checkForUpdates(context);
       
       Future.delayed(const Duration(milliseconds: 300), () {
         try {

@@ -7,7 +7,16 @@
     "groups": {
       "testers": {
         "emails": ["sadhuj2005@gmail.com"]
+      },
+      "beta": {
+        "emails": ["sadhuj2005@gmail.com"]
+      },
+      "internal": {
+        "emails": ["sadhuj2005@gmail.com"]
       }
+    },
+    "releaseNotes": {
+      "default": "🎉 New GenZSpace Update Available!\n\n✨ What's New:\n• Enhanced user experience\n• Bug fixes and performance improvements\n• New features and updates\n\n🔄 This update will be automatically detected by the app!"
     }
   },
   "firestore": {

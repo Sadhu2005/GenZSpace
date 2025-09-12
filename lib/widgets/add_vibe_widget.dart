@@ -106,11 +106,20 @@ class _AddVibeWidgetState extends State<AddVibeWidget>
                         ),
                         const Spacer(),
                         IconButton(
-                          icon: Icon(
-                            Icons.send,
-                            color: _canPost() ? Colors.purple[300] : Colors.grey,
-                          ),
-                          onPressed: _canPost() ? _postVibe : null,
+                          icon: _isLoading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.purple),
+                                  ),
+                                )
+                              : Icon(
+                                  Icons.send,
+                                  color: _canPost() ? Colors.purple[300] : Colors.grey,
+                                ),
+                          onPressed: _canPost() && !_isLoading ? _postVibe : null,
                         ),
                       ],
                     ),
@@ -505,7 +514,7 @@ class _AddVibeWidgetState extends State<AddVibeWidget>
   }
 
   void _postVibe() async {
-    if (!_canPost()) return;
+    if (!_canPost() || _isLoading) return;
 
     setState(() {
       _isLoading = true;
@@ -528,18 +537,40 @@ class _AddVibeWidgetState extends State<AddVibeWidget>
         vibeType: widget.vibeType,
       );
 
+      // Call the callback to add the vibe
       widget.onVibeAdded(vibe);
+      
+      // Show success message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Vibe posted successfully!'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+      
+      // Close the widget after successful posting
+      if (mounted) {
+        Navigator.pop(context);
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error posting vibe: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error posting vibe: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 }

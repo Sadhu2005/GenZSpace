@@ -26,6 +26,7 @@ dependencies:
   url_launcher: ^6.2.1
   share_plus: ^7.2.1
   permission_handler: ^11.0.1
+  firebase_app_distribution: ^0.2.2
 
 dev_dependencies:
   flutter_test:
