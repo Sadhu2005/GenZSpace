@@ -27,7 +27,7 @@ class AppConfig {
   
   // App Configuration
   static String get appName => 
-      const String.fromEnvironment('APP_NAME', defaultValue: 'GenZSpace');
+      const String.fromEnvironment('APP_NAME', defaultValue: 'GenZSpace 🚀');
   
   static String get appVersion => 
       const String.fromEnvironment('APP_VERSION', defaultValue: '1.0.0');
