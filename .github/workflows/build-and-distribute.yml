@@ -1,4 +1,4 @@
-name: Build and Distribute GenZSpace
+name: Build GenZSpace
 
 on:
   push:
@@ -9,7 +9,6 @@ on:
 jobs:
   build-android:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
     
     steps:
     - name: Checkout code
@@ -39,33 +38,22 @@ jobs:
     - name: Build App Bundle
       run: flutter build appbundle --release
       
-    - name: Upload APK to Firebase App Distribution
-      uses: wzieba/Firebase-Distribution-Github-Action@v1
+    - name: Upload APK as Artifact
+      uses: actions/upload-artifact@v4
       with:
-        appId: 1:839050117776:android:ceadd7043e4cc3aafbce15
-        token: ${{ secrets.FIREBASE_TOKEN }}
-        groups: testers
-        file: build/app/outputs/flutter-apk/app-release.apk
-        releaseNotes: |
-          🚀 New GenZSpace Build
-          
-          📱 Features:
-          - Complete frontend implementation
-          - All screens and navigation
-          - Modern UI with dark theme
-          
-          🔧 Changes:
-          - Updated from commit: ${{ github.sha }}
-          - Branch: ${{ github.ref_name }}
-          
-          📝 Testing Notes:
-          - Test all navigation flows
-          - Verify UI responsiveness
-          - Check animations and transitions
+        name: genzspace-apk
+        path: build/app/outputs/flutter-apk/app-release.apk
+        retention-days: 30
+        
+    - name: Upload App Bundle as Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: genzspace-aab
+        path: build/app/outputs/bundle/release/app-release.aab
+        retention-days: 30
 
   build-ios:
     runs-on: macos-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
     
     steps:
     - name: Checkout code
@@ -83,24 +71,12 @@ jobs:
     - name: Build iOS
       run: flutter build ios --release --no-codesign
       
-    - name: Upload iOS to Firebase App Distribution
-      uses: wzieba/Firebase-Distribution-Github-Action@v1
+    - name: Upload iOS as Artifact
+      uses: actions/upload-artifact@v4
       with:
-        appId: 1:839050117776:ios:ceadd7043e4cc3aafbce15
-        token: ${{ secrets.FIREBASE_TOKEN }}
-        groups: ios-testers
-        file: build/ios/iphoneos/Runner.app
-        releaseNotes: |
-          🚀 New GenZSpace iOS Build
-          
-          📱 Features:
-          - Complete frontend implementation
-          - All screens and navigation
-          - Modern UI with dark theme
-          
-          🔧 Changes:
-          - Updated from commit: ${{ github.sha }}
-          - Branch: ${{ github.ref_name }}
+        name: genzspace-ios
+        path: build/ios/iphoneos/Runner.app
+        retention-days: 30
 
   notify:
     runs-on: ubuntu-latest
