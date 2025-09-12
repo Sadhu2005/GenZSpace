@@ -5,6 +5,7 @@ plugins {
 }
 
 android {
+    namespace "com.anu.GenZSpace"
     compileSdkVersion 34
 
     defaultConfig {
