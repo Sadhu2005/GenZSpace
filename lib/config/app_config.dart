@@ -30,7 +30,10 @@ class AppConfig {
       const String.fromEnvironment('APP_NAME', defaultValue: 'GenZSpace 🚀');
   
   static String get appVersion => 
-      const String.fromEnvironment('APP_VERSION', defaultValue: '1.0.0');
+      const String.fromEnvironment('APP_VERSION', defaultValue: '1.0.1');
+  
+  static String get buildNumber => 
+      const String.fromEnvironment('BUILD_NUMBER', defaultValue: '1');
   
   static bool get isDebugMode => 
       const bool.fromEnvironment('DEBUG_MODE', defaultValue: kDebugMode);

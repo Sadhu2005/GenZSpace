@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
 import '../widgets/genz_logo.dart';
+import '../services/update_service.dart';
 
 class BootScreen extends StatefulWidget {
   const BootScreen({super.key});
@@ -49,6 +50,9 @@ class _BootScreenState extends State<BootScreen>
       setState(() {
         _bootingComplete = true;
       });
+      
+      // Check for updates first
+      UpdateService.checkForUpdates(context);
       
       Future.delayed(const Duration(milliseconds: 500), () {
         Navigator.pushReplacement(
