@@ -1,0 +1,37 @@
+{
+  "projects": {
+    "default": "genzspace"
+  },
+  "appdistribution": {
+    "app": "1:839050117776:android:ceadd7043e4cc3aafbce15",
+    "groups": {
+      "testers": {
+        "emails": ["sadhuj2005@gmail.com"]
+      },
+      "ios-testers": {
+        "emails": ["sadhuj2005@gmail.com"]
+      }
+    }
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "hosting": {
+    "public": "website",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
