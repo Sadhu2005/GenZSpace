@@ -1,4 +1,4 @@
-package com.example.yuva_space
+package com.anu.GenZSpace
 
 import io.flutter.embedding.android.FlutterActivity
 
