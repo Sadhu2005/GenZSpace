@@ -1,21 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../config/app_config.dart';
 
 class UpdateService {
   static Future<void> checkForUpdates(BuildContext context) async {
     try {
-      final packageInfo = await PackageInfo.fromPlatform();
-      final currentVersion = packageInfo.version;
-      final currentBuildNumber = packageInfo.buildNumber;
-      
-      // In a real app, you would check against a remote API
       // For now, we'll show a simple update dialog
-      if (currentVersion != AppConfig.appVersion || 
-          currentBuildNumber != AppConfig.buildNumber) {
-        _showUpdateDialog(context);
-      }
+      // In a real app, you would check against a remote API
+      // and compare with the current app version
+      _showUpdateDialog(context);
     } catch (e) {
       debugPrint('Error checking for updates: $e');
     }
