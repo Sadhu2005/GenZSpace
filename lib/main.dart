@@ -8,10 +8,16 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  try {
+    // Initialize Firebase
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    print('✅ Firebase initialized successfully');
+  } catch (e) {
+    print('❌ Firebase initialization failed: $e');
+    // Continue without Firebase for now
+  }
 
   // Print configuration status
   AppConfig.printConfig();
@@ -31,6 +37,13 @@ class GenZSpaceApp extends StatelessWidget {
       themeMode: ThemeMode.dark,
       home: const BootScreen(),
       debugShowCheckedModeBanner: AppConfig.isDebugMode,
+      builder: (context, child) {
+        // Add error boundary
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+          child: child!,
+        );
+      },
     );
   }
 }
