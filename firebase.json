@@ -7,9 +7,6 @@
     "groups": {
       "testers": {
         "emails": ["sadhuj2005@gmail.com"]
-      },
-      "ios-testers": {
-        "emails": ["sadhuj2005@gmail.com"]
       }
     }
   },
