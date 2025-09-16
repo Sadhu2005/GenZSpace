@@ -12,8 +12,6 @@ class FeedScreen extends StatefulWidget {
 
 class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
   late AnimationController _refreshController;
-  late Animation<double> _refreshAnimation;
-  bool _isRefreshing = false;
 
   @override
   void initState() {

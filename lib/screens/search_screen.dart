@@ -17,7 +17,6 @@ class _SearchScreenState extends State<SearchScreen>
   String _selectedSort = 'Recent';
 
   late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
 
   final List<String> _filters = [
     'All',
@@ -35,45 +34,6 @@ class _SearchScreenState extends State<SearchScreen>
     'Year',
   ];
 
-  // Mock data for demonstration
-  final List<UserModel> _users = [
-    UserModel(
-      uid: 'user1',
-      name: 'Rahul Sharma',
-      phone: '1234567890',
-      collegeId: 'IITB2020',
-      college: 'IIT Bombay',
-      course: 'B.Tech',
-      branch: 'Computer Science',
-      year: 3,
-      interests: ['Coding', 'Gaming', 'Music'],
-      joinedAt: DateTime.now().subtract(const Duration(days: 30)),
-    ),
-    UserModel(
-      uid: 'user2',
-      name: 'Priya Patel',
-      phone: '0987654321',
-      collegeId: 'NITK2021',
-      college: 'NIT Surathkal',
-      course: 'B.Tech',
-      branch: 'Electronics',
-      year: 2,
-      interests: ['Dancing', 'Photography', 'Art'],
-      joinedAt: DateTime.now().subtract(const Duration(days: 25)),
-    ),
-    UserModel(
-      uid: 'user3',
-      name: 'Amit Kumar',
-      phone: '1122334455',
-      collegeId: 'IITD2019',
-      college: 'IIT Delhi',
-      course: 'B.Tech',
-      branch: 'Mechanical',
-      year: 4,
-      interests: ['Sports', 'Reading', 'Traveling'],
-      joinedAt: DateTime.now().subtract(const Duration(days: 20)),
-    ),
-  ];
 
   @override
   void initState() {

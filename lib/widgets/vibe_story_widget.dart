@@ -23,7 +23,6 @@ class _VibeStoryWidgetState extends State<VibeStoryWidget>
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<double> _glowAnimation;
-  bool _isViewed = false;
 
   @override
   void initState() {

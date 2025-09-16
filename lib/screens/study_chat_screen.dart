@@ -676,7 +676,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   void _sendMessage() {
     if (_messageController.text.trim().isEmpty) return;
 
-    final message = ChatMessage(
+    ChatMessage(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       chatId: widget.chat.id,
       senderId: 'current_user',

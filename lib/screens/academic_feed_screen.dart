@@ -13,7 +13,6 @@ class AcademicFeedScreen extends StatefulWidget {
 class _AcademicFeedScreenState extends State<AcademicFeedScreen>
     with TickerProviderStateMixin {
   late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
   String _selectedFilter = 'All';
 
   final List<String> _filters = [
