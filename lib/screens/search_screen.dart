@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../models/user_model.dart';
-import '../widgets/user_card.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});

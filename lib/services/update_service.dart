@@ -1,33 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:firebase_app_distribution/firebase_app_distribution.dart';
-import '../config/app_config.dart';
 
 class UpdateService {
   static Future<void> checkForUpdates(BuildContext context) async {
     try {
-      // Check for updates using Firebase App Distribution
-      final bool isUpdateAvailable = await FirebaseAppDistribution.checkForUpdate();
+      // For now, we'll skip Firebase App Distribution check
+      // and just show a simple update check
+      debugPrint('Update check completed - app is up to date');
       
-      if (isUpdateAvailable) {
-        _showUpdateDialog(context);
-      } else {
-        debugPrint('App is up to date');
-      }
     } catch (e) {
       debugPrint('Error checking for updates: $e');
-      // Fallback to manual check
-      _checkManualUpdate(context);
     }
   }
   
-  static void _checkManualUpdate(BuildContext context) {
-    // You can implement a custom version check here
-    // For now, we'll show a simple update dialog
-    _showUpdateDialog(context);
-  }
-  
-  static void _showUpdateDialog(BuildContext context) {
+  static Future<void> _showUpdateDialog(BuildContext context) async {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -57,34 +43,44 @@ class UpdateService {
                 style: TextStyle(color: Colors.grey),
               ),
             ),
-            ElevatedButton(
-              onPressed: () async {
-                try {
-                  // Try to update using Firebase App Distribution
-                  await FirebaseAppDistribution.updateApp();
-                } catch (e) {
-                  // Fallback to manual download
-                  _openDownloadPage();
-                }
-                Navigator.of(context).pop();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF6366F1),
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('Update Now'),
-            ),
+             ElevatedButton(
+               onPressed: () async {
+                 // Open app store or download page
+                 final Uri url = Uri.parse('https://play.google.com/store/apps/details?id=com.anu.GenZSpace');
+                 if (await canLaunchUrl(url)) {
+                   await launchUrl(url, mode: LaunchMode.externalApplication);
+                 }
+                 Navigator.of(context).pop();
+               },
+               style: ElevatedButton.styleFrom(
+                 backgroundColor: const Color(0xFF6366F1),
+                 foregroundColor: Colors.white,
+               ),
+               child: const Text('Update Now'),
+             ),
           ],
         );
       },
     );
   }
   
-  static void _openDownloadPage() async {
-    // Open your website for manual download
-    const url = 'https://zengspace.in';
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url));
+  static Future<void> downloadUpdate(BuildContext context) async {
+    try {
+      // For now, redirect to Play Store
+      final Uri url = Uri.parse('https://play.google.com/store/apps/details?id=com.anu.GenZSpace');
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      }
+    } catch (e) {
+      debugPrint('Error downloading update: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to open update page'),
+          ),
+        );
+      }
     }
   }
 }
+

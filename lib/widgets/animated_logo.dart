@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:yuvaspace/theme/app_theme.dart';
+import '../theme/app_theme.dart';
 
 class AnimatedLogo extends StatefulWidget {
   const AnimatedLogo({super.key});
