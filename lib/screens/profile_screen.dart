@@ -16,6 +16,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
   late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {

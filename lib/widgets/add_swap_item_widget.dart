@@ -30,6 +30,7 @@ class _AddSwapItemWidgetState extends State<AddSwapItemWidget>
   String _selectedCategory = 'books';
   String _selectedCondition = 'good';
   List<File> _selectedImages = [];
+  bool _isLoading = false;
 
   final List<String> _categories = [
     'books',

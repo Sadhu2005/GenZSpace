@@ -17,6 +17,7 @@ class _SearchScreenState extends State<SearchScreen>
   String _selectedSort = 'Recent';
 
   late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
 
   final List<String> _filters = [
     'All',
