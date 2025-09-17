@@ -16,7 +16,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _bioController = TextEditingController(text: 'Passionate Computer Science student with a love for technology and innovation.');
   final _instagramController = TextEditingController(text: '@rahulsharma');
   final _linkedinController = TextEditingController(text: 'linkedin.com/in/rahulsharma');
-
   int _selectedYear = 3;
   List<String> _selectedInterests = ['Machine Learning', 'Web Development', 'Gaming'];
   List<String> _selectedSkills = ['Python', 'JavaScript', 'React'];
