@@ -17,7 +17,6 @@ class _SearchScreenState extends State<SearchScreen>
   String _selectedSort = 'Recent';
 
   late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
 
   final List<String> _filters = [
     'All',
@@ -43,9 +42,7 @@ class _SearchScreenState extends State<SearchScreen>
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
-    );
+    // Animation setup removed
     _animationController.forward();
   }
 

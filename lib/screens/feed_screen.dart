@@ -12,7 +12,6 @@ class FeedScreen extends StatefulWidget {
 
 class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
   late AnimationController _refreshController;
-  late Animation<double> _refreshAnimation;
 
   @override
   void initState() {
@@ -21,9 +20,7 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
-    _refreshAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _refreshController, curve: Curves.easeInOut),
-    );
+    // Animation setup removed
   }
 
   @override

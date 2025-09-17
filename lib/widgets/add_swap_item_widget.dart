@@ -30,7 +30,6 @@ class _AddSwapItemWidgetState extends State<AddSwapItemWidget>
   String _selectedCategory = 'books';
   String _selectedCondition = 'good';
   List<File> _selectedImages = [];
-  bool _isLoading = false;
 
   final List<String> _categories = [
     'books',
@@ -580,7 +579,7 @@ class _AddSwapItemWidgetState extends State<AddSwapItemWidget>
     if (!_canPost()) return;
 
     setState(() {
-      _isLoading = true;
+      // Loading state removed
     });
 
     try {
@@ -606,7 +605,7 @@ class _AddSwapItemWidgetState extends State<AddSwapItemWidget>
       _showErrorSnackBar('Error posting item: $e');
     } finally {
       setState(() {
-        _isLoading = false;
+        // Loading state removed
       });
     }
   }

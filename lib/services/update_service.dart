@@ -4,7 +4,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 class UpdateService {
   static const String _playStoreUrl = 'https://play.google.com/store/apps/details?id=com.anu.GenZSpace';
-  static const String _playStoreInternalUrl = 'https://play.google.com/apps/internaltest/4699900537351244955';
   
   static Future<void> checkForUpdates(BuildContext context) async {
     try {

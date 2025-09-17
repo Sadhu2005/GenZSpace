@@ -28,7 +28,7 @@ class AppTheme {
     colorScheme: const ColorScheme.light(
       primary: primaryColor,
       secondary: secondaryColor,
-      background: lightBackground,
+      surface: lightBackground,
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
@@ -93,7 +93,7 @@ class AppTheme {
     colorScheme: const ColorScheme.dark(
       primary: primaryColor,
       secondary: secondaryColor,
-      background: darkBackground,
+      surface: darkBackground,
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
