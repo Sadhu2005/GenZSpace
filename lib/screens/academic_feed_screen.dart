@@ -9,7 +9,6 @@ class AcademicFeedScreen extends StatefulWidget {
   @override
   State<AcademicFeedScreen> createState() => _AcademicFeedScreenState();
 }
-
 class _AcademicFeedScreenState extends State<AcademicFeedScreen>
     with TickerProviderStateMixin {
   late AnimationController _animationController;
