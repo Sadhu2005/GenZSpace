@@ -1,0 +1,154 @@
+name: Deploy Website to Hostinger
+
+on:
+  push:
+    branches: [ main, master ]
+    paths: 
+      - 'website/**'
+      - '.github/workflows/deploy-website.yml'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'website/**'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: |
+        cd website
+        if [ -f package.json ]; then
+          npm ci
+        fi
+        
+    - name: Build website
+      run: |
+        cd website
+        # Run any build commands if needed
+        echo "Building website..."
+        # Add build commands here if you have them
+        # npm run build
+        
+    - name: Validate HTML
+      uses: validator/validator-action@v1
+      with:
+        root: website
+        ignored_globs: "**/*.css,**/*.js"
+        
+    - name: Optimize images
+      run: |
+        cd website
+        # Install imagemin if not already installed
+        if [ ! -d "node_modules/imagemin-cli" ]; then
+          npm install -g imagemin-cli imagemin-pngquant imagemin-mozjpeg
+        fi
+        
+        # Optimize images if they exist
+        if [ -d "assets/images" ]; then
+          find assets/images -name "*.png" -exec imagemin {} --plugin=pngquant --plugin=mozjpeg --out-dir=assets/images/optimized \;
+          find assets/images -name "*.jpg" -exec imagemin {} --plugin=mozjpeg --out-dir=assets/images/optimized \;
+        fi
+        
+    - name: Create deployment package
+      run: |
+        cd website
+        # Create a clean deployment directory
+        mkdir -p ../deploy
+        cp -r . ../deploy/
+        
+        # Remove development files
+        rm -rf ../deploy/node_modules
+        rm -rf ../deploy/.git
+        rm -rf ../deploy/package*.json
+        
+        # Create zip for Hostinger
+        cd ../deploy
+        zip -r website-deploy.zip .
+        
+    - name: Deploy to Hostinger via FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.HOSTINGER_FTP_HOST }}
+        username: ${{ secrets.HOSTINGER_FTP_USERNAME }}
+        password: ${{ secrets.HOSTINGER_FTP_PASSWORD }}
+        protocol: ftp
+        port: 21
+        local-dir: ./deploy/
+        server-dir: /public_html/
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/node_modules/**
+          **/.DS_Store
+          **/Thumbs.db
+          **/.vscode/**
+          **/.idea/**
+          **/README.md
+          **/package*.json
+          
+    - name: Deploy to Hostinger via SSH (Alternative)
+      if: ${{ secrets.HOSTINGER_SSH_KEY != '' }}
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.HOSTINGER_SSH_HOST }}
+        username: ${{ secrets.HOSTINGER_SSH_USERNAME }}
+        key: ${{ secrets.HOSTINGER_SSH_KEY }}
+        port: ${{ secrets.HOSTINGER_SSH_PORT || 22 }}
+        script: |
+          cd public_html
+          # Backup current deployment
+          if [ -d "website-backup" ]; then
+            rm -rf website-backup-old
+            mv website-backup website-backup-old
+          fi
+          
+          if [ -d "." ]; then
+            cp -r . website-backup
+          fi
+          
+          # Clear current files (except backup)
+          find . -maxdepth 1 ! -name 'website-backup*' ! -name '.' -exec rm -rf {} \;
+          
+    - name: Upload files via SCP (Alternative)
+      if: ${{ secrets.HOSTINGER_SSH_KEY != '' }}
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ${{ secrets.HOSTINGER_SSH_HOST }}
+        username: ${{ secrets.HOSTINGER_SSH_USERNAME }}
+        key: ${{ secrets.HOSTINGER_SSH_KEY }}
+        port: ${{ secrets.HOSTINGER_SSH_PORT || 22 }}
+        source: "deploy/*"
+        target: "/public_html/"
+        strip_components: 1
+        
+    - name: Verify deployment
+      run: |
+        echo "Deployment completed successfully!"
+        echo "Website should be available at: https://zengspace.in"
+        echo "Deployment time: $(date)"
+        
+    - name: Notify deployment status
+      if: always()
+      run: |
+        if [ "${{ job.status }}" == "success" ]; then
+          echo "✅ Website deployed successfully to Hostinger"
+        else
+          echo "❌ Website deployment failed"
+          exit 1
+        fi
+        
+    - name: Cleanup
+      if: always()
+      run: |
+        rm -rf deploy/
