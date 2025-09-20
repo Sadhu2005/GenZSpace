@@ -147,40 +147,47 @@ jobs:
         export GOOGLE_APPLICATION_CREDENTIALS=firebase-service-account.json
         
     - name: Distribute to Firebase App Distribution
-      run: |
-        firebase appdistribution:distribute \
-          build/app/outputs/flutter-apk/app-release.apk \
-          --app 1:839050117776:android:ceadd7043e4cc3aafbce15 \
-          --groups "internal,testers,beta" \
-          --release-notes "🚀 New GenZSpace Update! 
-
-        ✨ What's New:
-        • Enhanced user experience
-        • Bug fixes and performance improvements
-        • New features and updates
-        • Firebase backend integration
-        • Real-time messaging improvements
-        
-        🔄 This update will be automatically detected by the app!"
+      uses: wzieba/Firebase-Distribution-Github-Action@v1
+      with:
+        appId: ${{ secrets.FIREBASE_APP_ID }}
+        serviceCredentialsFile: firebase-service-account.json
+        groups: internal,testers,beta
+        file: build/app/outputs/flutter-apk/app-release.apk
+        releaseNotes: |
+          🚀 New GenZSpace Update!
+          
+          ✨ What's New:
+          • Enhanced user experience
+          • Bug fixes and performance improvements
+          • New features and updates
+          • Firebase backend integration
+          • Real-time messaging improvements
+          
+          🔄 This update will be automatically detected by the app!
         
     - name: Setup Google Play Console API
+      if: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY != '' }}
       run: |
         echo '${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}' | base64 -d > google-play-service-account.json
         export GOOGLE_APPLICATION_CREDENTIALS=google-play-service-account.json
         
     - name: Install Google Play Console API tools
+      if: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY != '' }}
       run: |
         pip install google-api-python-client
         pip install google-auth-httplib2
         pip install google-auth-oauthlib
         
     - name: Upload to Google Play Store Internal Testing
-      run: |
-        python scripts/upload-to-playstore.py \
-          --package-name "com.anu.GenZSpace" \
-          --apk-path "build/app/outputs/flutter-apk/app-release.apk" \
-          --track "internal" \
-          --release-notes "New GenZSpace Update with Firebase integration and improved features"
+      if: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY != '' }}
+      uses: r0adkll/upload-google-play@v1
+      with:
+        serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}
+        packageName: com.anu.GenZSpace
+        releaseFiles: build/app/outputs/flutter-apk/app-release.apk
+        track: internal
+        status: completed
+        whatsNewDirectory: .
       continue-on-error: true
 
   # Job 4: Notification & Monitoring
