@@ -1,0 +1,260 @@
+name: Firebase Deploy & App Distribution
+
+on:
+  push:
+    branches: [ main, master, develop ]
+    paths: 
+      - 'lib/**'
+      - 'android/**'
+      - 'ios/**'
+      - 'firebase.json'
+      - 'firestore.rules'
+      - 'firestore.indexes.json'
+      - 'storage.rules'
+      - '.github/workflows/firebase-deploy.yml'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'lib/**'
+      - 'android/**'
+      - 'ios/**'
+
+env:
+  FLUTTER_VERSION: '3.24.0'
+  JAVA_VERSION: '17'
+
+jobs:
+  # Job 1: Build and Test Flutter App
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: ${{ env.JAVA_VERSION }}
+        
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        channel: 'stable'
+        cache: true
+        
+    - name: Get Flutter dependencies
+      run: flutter pub get
+      
+    - name: Analyze Flutter code
+      run: flutter analyze
+      
+    - name: Run Flutter tests
+      run: flutter test --coverage
+      
+    - name: Build Android APK (Debug)
+      run: flutter build apk --debug
+      
+    - name: Build Android APK (Release)
+      run: flutter build apk --release
+      
+    - name: Upload APK artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-apk
+        path: build/app/outputs/flutter-apk/
+        
+    - name: Upload coverage reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-reports
+        path: coverage/
+
+  # Job 2: Deploy Firebase Services
+  deploy-firebase:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install Firebase CLI
+      run: npm install -g firebase-tools
+      
+    - name: Setup Firebase credentials
+      run: |
+        echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}' | base64 -d > firebase-service-account.json
+        export GOOGLE_APPLICATION_CREDENTIALS=firebase-service-account.json
+        
+    - name: Deploy Firestore Rules
+      run: firebase deploy --only firestore:rules
+      
+    - name: Deploy Firestore Indexes
+      run: firebase deploy --only firestore:indexes
+      
+    - name: Deploy Storage Rules
+      run: firebase deploy --only storage
+      
+    - name: Deploy Firebase Hosting (Website)
+      run: firebase deploy --only hosting
+      
+    - name: Deploy Firebase Functions (if any)
+      run: firebase deploy --only functions
+      continue-on-error: true
+
+  # Job 3: App Distribution & Play Store Internal Testing
+  distribute-app:
+    runs-on: ubuntu-latest
+    needs: [build-and-test, deploy-firebase]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Download APK artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: android-apk
+        
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        channel: 'stable'
+        
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: ${{ env.JAVA_VERSION }}
+        
+    - name: Setup Firebase CLI
+      run: npm install -g firebase-tools
+      
+    - name: Setup Firebase credentials
+      run: |
+        echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}' | base64 -d > firebase-service-account.json
+        export GOOGLE_APPLICATION_CREDENTIALS=firebase-service-account.json
+        
+    - name: Distribute to Firebase App Distribution
+      run: |
+        firebase appdistribution:distribute \
+          build/app/outputs/flutter-apk/app-release.apk \
+          --app 1:839050117776:android:ceadd7043e4cc3aafbce15 \
+          --groups "internal,testers,beta" \
+          --release-notes "🚀 New GenZSpace Update! 
+
+        ✨ What's New:
+        • Enhanced user experience
+        • Bug fixes and performance improvements
+        • New features and updates
+        • Firebase backend integration
+        • Real-time messaging improvements
+        
+        🔄 This update will be automatically detected by the app!"
+        
+    - name: Setup Google Play Console API
+      run: |
+        echo '${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}' | base64 -d > google-play-service-account.json
+        export GOOGLE_APPLICATION_CREDENTIALS=google-play-service-account.json
+        
+    - name: Install Google Play Console API tools
+      run: |
+        pip install google-api-python-client
+        pip install google-auth-httplib2
+        pip install google-auth-oauthlib
+        
+    - name: Upload to Google Play Store Internal Testing
+      run: |
+        python scripts/upload-to-playstore.py \
+          --package-name "com.anu.GenZSpace" \
+          --apk-path "build/app/outputs/flutter-apk/app-release.apk" \
+          --track "internal" \
+          --release-notes "New GenZSpace Update with Firebase integration and improved features"
+      continue-on-error: true
+
+  # Job 4: Notification & Monitoring
+  notify-deployment:
+    runs-on: ubuntu-latest
+    needs: [build-and-test, deploy-firebase, distribute-app]
+    if: always()
+    
+    steps:
+    - name: Notify Discord
+      if: ${{ secrets.DISCORD_WEBHOOK_URL != '' }}
+      run: |
+        if [ "${{ needs.deploy-firebase.result }}" == "success" ] && [ "${{ needs.distribute-app.result }}" == "success" ]; then
+          MESSAGE="✅ GenZSpace deployment successful! 🚀\n\n📱 App distributed to internal testers\n🔥 Firebase services deployed\n🌐 Website updated\n\n🔗 [View deployment](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+          COLOR="65280"
+        else
+          MESSAGE="❌ GenZSpace deployment failed! 😞\n\n🔗 [View logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+          COLOR="16711680"
+        fi
+        
+        curl -H "Content-Type: application/json" \
+          -d "{\"embeds\":[{\"title\":\"GenZSpace CI/CD\",\"description\":\"$MESSAGE\",\"color\":$COLOR,\"timestamp\":\"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)\"}]}" \
+          ${{ secrets.DISCORD_WEBHOOK_URL }}
+          
+    - name: Create GitHub Release
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ github.run_number }}
+        release_name: GenZSpace v${{ github.run_number }}
+        body: |
+          🚀 **GenZSpace Release v${{ github.run_number }}**
+          
+          ## 📱 What's New
+          - Enhanced user experience
+          - Bug fixes and performance improvements
+          - Firebase backend integration
+          - Real-time messaging improvements
+          
+          ## 🔗 Links
+          - [Download APK](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          - [Firebase Console](https://console.firebase.google.com/project/genzspace)
+          - [Website](https://zengspace.in)
+          
+          ## 📊 Build Info
+          - **Commit**: ${{ github.sha }}
+          - **Branch**: ${{ github.ref_name }}
+          - **Build**: #${{ github.run_number }}
+        draft: false
+        prerelease: true
+
+  # Job 5: Security Scan
+  security-scan:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Run CodeQL Analysis
+      uses: github/codeql-action/init@v3
+      with:
+        languages: dart
+        
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+      
+    - name: Scan for secrets
+      uses: trufflesecurity/trufflehog@main
+      with:
+        path: ./
+        base: main
+        head: HEAD
+        extra_args: --debug --only-verified
