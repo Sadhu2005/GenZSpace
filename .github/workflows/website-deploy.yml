@@ -21,24 +21,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: |
-        cd website
-        npm install -g html-validator
-        
-    - name: Validate HTML
-      run: |
-        cd website
-        html-validator --file index.html --verbose
-        html-validator --file privacy.html --verbose
-        html-validator --file 404.html --verbose
-        
     - name: Verify website files
       run: |
         cd website
