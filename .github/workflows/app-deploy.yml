@@ -1,0 +1,198 @@
+name: 📱 Deploy App to Google Play Store Internal Testing
+
+on:
+  push:
+    branches: [ main, master, develop ]
+    paths:
+      - 'lib/**'
+      - 'android/**'
+      - 'ios/**'
+      - 'firebase.json'
+      - 'firestore.rules'
+      - 'firestore.indexes.json'
+      - 'storage.rules'
+      - '.github/workflows/app-deploy.yml'
+    paths-ignore:
+      - 'website/**'
+      - 'website/**/*'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'lib/**'
+      - 'android/**'
+      - 'ios/**'
+  workflow_dispatch: # Manual trigger option
+    inputs:
+      deploy_type:
+        description: 'Deploy App to Google Play Store Internal Testing'
+        required: true
+        default: 'app'
+        type: choice
+        options:
+          - app
+
+env:
+  FLUTTER_VERSION: '3.24.0'
+  JAVA_VERSION: '17'
+
+jobs:
+  # Job 1: Build and Test Flutter App
+  build-and-test:
+    runs-on: ubuntu-latest
+    outputs:
+      version-name: ${{ steps.version.outputs.version-name }}
+      version-code: ${{ steps.version.outputs.version-code }}
+      build-number: ${{ steps.version.outputs.build-number }}
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+      
+    - name: ☕ Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: ${{ env.JAVA_VERSION }}
+        
+    - name: 🎯 Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        channel: 'stable'
+        cache: true
+        
+    - name: 📦 Get Flutter dependencies
+      run: flutter pub get
+      
+    - name: 🔍 Analyze Flutter code
+      run: flutter analyze
+      
+    - name: 🧪 Run Flutter tests
+      run: flutter test --coverage
+      
+    - name: 📱 Build Android AAB (Release)
+      run: flutter build appbundle --release
+      
+    - name: 📱 Build Android APK (Debug)
+      run: flutter build apk --debug
+      
+    - name: 📊 Extract version info
+      id: version
+      run: |
+        # Extract version from pubspec.yaml
+        VERSION_NAME=$(grep 'version:' pubspec.yaml | sed 's/version: //' | cut -d'+' -f1)
+        VERSION_CODE=$(grep 'version:' pubspec.yaml | sed 's/version: //' | cut -d'+' -f2)
+        BUILD_NUMBER=$(date +%Y%m%d%H%M)
+        
+        echo "version-name=$VERSION_NAME" >> $GITHUB_OUTPUT
+        echo "version-code=$VERSION_CODE" >> $GITHUB_OUTPUT
+        echo "build-number=$BUILD_NUMBER" >> $GITHUB_OUTPUT
+        
+        echo "📱 App Version: $VERSION_NAME"
+        echo "📱 Version Code: $VERSION_CODE"
+        echo "📱 Build Number: $BUILD_NUMBER"
+      
+    - name: 📤 Upload APK artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-apk
+        path: build/app/outputs/flutter-apk/
+        
+    - name: 📤 Upload AAB artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: android-aab
+        path: build/app/outputs/bundle/release/
+        
+  # Job 2: Deploy to Firebase (Optional)
+  deploy-firebase:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: false # Disabled for now, enable if needed
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: 📦 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: 🔧 Install Firebase CLI
+      run: npm install -g firebase-tools
+      
+    - name: 🚀 Deploy to Firebase
+      run: |
+        firebase deploy --only hosting,firestore,storage
+      env:
+        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        
+  # Job 3: Deploy to Google Play Store Internal Testing
+  deploy-playstore:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      
+    - name: ☕ Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: ${{ env.JAVA_VERSION }}
+        
+    - name: 🎯 Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ env.FLUTTER_VERSION }}
+        channel: 'stable'
+        cache: true
+        
+    - name: 📱 Build Android AAB (Release)
+      run: flutter build appbundle --release
+      
+    - name: 🚀 Deploy to Google Play Store Internal Testing
+      uses: r0adkll/upload-google-play@v1
+      with:
+        serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+        packageName: com.anu.GenZSpace
+        releaseFiles: build/app/outputs/bundle/release/app-release.aab
+        track: internal
+        status: completed
+        inAppUpdatePriority: 2
+        releaseName: "Internal Test Build ${{ needs.build-and-test.outputs.build-number }}"
+        releaseNotes: |
+          🚀 New features and improvements:
+          • Latest updates from development
+          • Bug fixes and performance improvements
+          • Enhanced user experience
+          • Updated dependencies and security patches
+          
+          📱 Test this build and provide feedback!
+          
+    - name: 📊 Notify deployment success
+      if: success()
+      run: |
+        echo "✅ App deployed successfully to Google Play Store Internal Testing!"
+        echo "📱 Package: com.anu.GenZSpace"
+        echo "🎯 Track: Internal Testing"
+        echo "📊 Version: ${{ needs.build-and-test.outputs.version-name }}"
+        echo "🔢 Build: ${{ needs.build-and-test.outputs.build-number }}"
+        echo ""
+        echo "📱 Your app will be available for testing in a few minutes!"
+        echo "🔗 Check Google Play Console for the latest build"
+        
+    - name: 📊 Notify deployment failure
+      if: failure()
+      run: |
+        echo "❌ App deployment to Google Play Store failed!"
+        echo "Please check the logs for more details."
+        echo "Common issues:"
+        echo "- Service account JSON not configured"
+        echo "- Package name mismatch"
+        echo "- Google Play Console permissions"
