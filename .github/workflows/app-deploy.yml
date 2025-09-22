@@ -76,7 +76,7 @@ jobs:
         echo "version-code=$VERSION_CODE" >> $GITHUB_OUTPUT
 
     - name: 🏗️ Build Android App Bundle (AAB)
-      run: flutter build appbundle --release
+      run: flutter build appbundle --release --no-tree-shake-icons
 
     - name: 🚀 Upload to Google Play Store Internal Testing
       uses: r0adkll/upload-google-play@v1

@@ -42,17 +42,25 @@ android {
 
     signingConfigs {
         create("release") {
-            keyAlias = "app-release-key"
-            keyPassword = "android"
-            storeFile = rootProject.file("app-release-key.keystore")
-            storePassword = "android"
+            val keystoreFile = rootProject.file("app-release-key.keystore")
+            if (keystoreFile.exists()) {
+                keyAlias = "app-release-key"
+                keyPassword = "android"
+                storeFile = keystoreFile
+                storePassword = "android"
+            }
         }
     }
 
     buildTypes {
         release {
-            // Use release signing for Google Play Console
-            signingConfig = signingConfigs.getByName("release")
+            // Use release signing if keystore exists, otherwise use debug signing for CI/CD
+            if (rootProject.file("app-release-key.keystore").exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            } else {
+                // For CI/CD, use debug signing
+                signingConfig = signingConfigs.getByName("debug")
+            }
             isMinifyEnabled = false
             isShrinkResources = false
         }
