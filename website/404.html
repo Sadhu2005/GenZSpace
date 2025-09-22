@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - GenZSpace</title>
+    <meta name="description" content="The page you're looking for doesn't exist on GenZSpace">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#F72585">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="./assets/images/favicon.ico">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="./assets/css/style.css">
+    
+    <style>
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(247, 37, 133, 0.1), rgba(114, 9, 183, 0.1));
+        }
+        .error-code {
+            font-size: 8rem;
+            font-weight: 900;
+            color: #F72585;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px rgba(247, 37, 133, 0.3);
+        }
+        .error-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+        .error-description {
+            font-size: 1.2rem;
+            color: #a0a0a0;
+            margin-bottom: 2rem;
+            max-width: 500px;
+        }
+        .error-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .btn-home {
+            background: linear-gradient(135deg, #F72585, #7209B7);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(247, 37, 133, 0.3);
+        }
+        .btn-back {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        .logo-section {
+            margin-bottom: 2rem;
+        }
+        .logo-section img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 1rem;
+        }
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #F72585, #7209B7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="logo-section">
+            <img src="./assets/images/logo.svg" alt="GenZSpace Logo">
+            <div class="logo-text">GenZSpace</div>
+        </div>
+        
+        <div class="error-code">404</div>
+        <h1 class="error-title">Page Not Found</h1>
+        <p class="error-description">
+            Sorry, the page you're looking for doesn't exist. 
+            It might have been moved, deleted, or you entered the wrong URL.
+        </p>
+        
+        <div class="error-actions">
+            <a href="index.html" class="btn-home">🏠 Go Home</a>
+            <a href="javascript:history.back()" class="btn-back">← Go Back</a>
+        </div>
+    </div>
+</body>
+</html>
