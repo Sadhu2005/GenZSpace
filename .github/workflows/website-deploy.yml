@@ -1,20 +1,11 @@
-name: Deploy Website to Hostinger
+name: 🌐 Deploy Website to Hostinger
 
 on:
   push:
     branches: [ main, master ]
     paths:
       - 'website/**'
-      - '.github/workflows/deploy-website.yml'
-    paths-ignore:
-      - 'lib/**'
-      - 'android/**'
-      - 'ios/**'
-      - 'firebase.json'
-      - 'firestore.rules'
-      - 'firestore.indexes.json'
-      - 'storage.rules'
-  workflow_dispatch: # Allow manual trigger
+  workflow_dispatch: # Manual trigger option
 
 env:
   HOSTINGER_HOST: genzspace.in
@@ -40,9 +31,6 @@ jobs:
       run: |
         cd website
         npm install -g html-validator
-        npm install -g imagemin-cli
-        npm install -g imagemin-pngquant
-        npm install -g imagemin-mozjpeg
         
     - name: Validate HTML
       run: |
