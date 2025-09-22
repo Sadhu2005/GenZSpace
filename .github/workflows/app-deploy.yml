@@ -79,6 +79,8 @@ jobs:
       run: |
         echo "🏗️ Building Android App Bundle with Gradle..."
         cd android
+        ls -la gradlew
+        chmod +x gradlew
         ./gradlew bundleRelease
         echo "✅ Gradle build completed"
         
