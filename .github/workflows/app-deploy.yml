@@ -76,7 +76,21 @@ jobs:
         echo "version-code=$VERSION_CODE" >> $GITHUB_OUTPUT
 
     - name: 🏗️ Build Android App Bundle (AAB)
-      run: flutter build appbundle --release --no-tree-shake-icons
+      run: |
+        echo "🏗️ Building Android App Bundle..."
+        flutter build appbundle --release --no-tree-shake-icons --verbose
+        echo "✅ Build command completed"
+
+    - name: 🔍 Verify AAB file exists
+      run: |
+        echo "🔍 Checking for AAB file..."
+        find . -name "*.aab" -type f
+        echo "📁 Build directory contents:"
+        ls -la build/app/outputs/bundle/release/ || echo "Release directory not found"
+        echo "📁 All build outputs:"
+        find build -name "*.aab" -type f || echo "No AAB files found in build directory"
+        echo "📁 Flutter build outputs:"
+        find build -name "*.apk" -type f || echo "No APK files found"
 
     - name: 🚀 Upload to Google Play Store Internal Testing
       uses: r0adkll/upload-google-play@v1
