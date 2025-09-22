@@ -12,9 +12,6 @@ on:
       - 'firestore.indexes.json'
       - 'storage.rules'
       - '.github/workflows/app-deploy.yml'
-    paths-ignore:
-      - 'website/**'
-      - 'website/**/*'
   pull_request:
     branches: [ main, master ]
     paths:
