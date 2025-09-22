@@ -12,12 +12,24 @@ on:
       - 'firestore.indexes.json'
       - 'storage.rules'
       - '.github/workflows/firebase-deploy.yml'
+    paths-ignore:
+      - 'website/**'
+      - 'website/**/*'
   pull_request:
     branches: [ main, master ]
     paths:
       - 'lib/**'
       - 'android/**'
       - 'ios/**'
+  workflow_dispatch: # Manual trigger option
+    inputs:
+      deploy_type:
+        description: 'Deploy App to Firebase & Play Store'
+        required: true
+        default: 'app'
+        type: choice
+        options:
+          - app
 
 env:
   FLUTTER_VERSION: '3.24.0'
