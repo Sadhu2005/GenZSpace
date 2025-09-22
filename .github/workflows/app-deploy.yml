@@ -77,10 +77,11 @@ jobs:
 
     - name: 🏗️ Build Android App Bundle (AAB)
       run: |
-        echo "🏗️ Building Android App Bundle..."
-        flutter build appbundle --release --no-tree-shake-icons
-        echo "✅ Build command completed"
-
+        echo "🏗️ Building Android App Bundle with Gradle..."
+        cd android
+        ./gradlew bundleRelease
+        echo "✅ Gradle build completed"
+        
     - name: 🔍 Find and verify AAB file
       id: find_aab
       run: |
@@ -96,6 +97,8 @@ jobs:
           echo "📁 Searching all build directories:"
           find build -type f -name "*.aab" || echo "No AAB files in build directory"
           find . -type f -name "*.aab" || echo "No AAB files anywhere"
+          echo "📁 Android build outputs:"
+          find android -type f -name "*.aab" || echo "No AAB files in android directory"
           exit 1
         fi
 
