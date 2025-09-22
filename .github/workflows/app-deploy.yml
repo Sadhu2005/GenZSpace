@@ -78,26 +78,33 @@ jobs:
     - name: 🏗️ Build Android App Bundle (AAB)
       run: |
         echo "🏗️ Building Android App Bundle..."
-        flutter build appbundle --release --no-tree-shake-icons --verbose
+        flutter build appbundle --release --no-tree-shake-icons
         echo "✅ Build command completed"
 
-    - name: 🔍 Verify AAB file exists
+    - name: 🔍 Find and verify AAB file
+      id: find_aab
       run: |
-        echo "🔍 Checking for AAB file..."
-        find . -name "*.aab" -type f
-        echo "📁 Build directory contents:"
-        ls -la build/app/outputs/bundle/release/ || echo "Release directory not found"
-        echo "📁 All build outputs:"
-        find build -name "*.aab" -type f || echo "No AAB files found in build directory"
-        echo "📁 Flutter build outputs:"
-        find build -name "*.apk" -type f || echo "No APK files found"
+        echo "🔍 Searching for AAB files..."
+        AAB_FILE=$(find . -name "*.aab" -type f | head -1)
+        if [ -n "$AAB_FILE" ]; then
+          echo "✅ Found AAB file: $AAB_FILE"
+          echo "aab-file=$AAB_FILE" >> $GITHUB_OUTPUT
+          echo "📁 AAB file details:"
+          ls -la "$AAB_FILE"
+        else
+          echo "❌ No AAB file found"
+          echo "📁 Searching all build directories:"
+          find build -type f -name "*.aab" || echo "No AAB files in build directory"
+          find . -type f -name "*.aab" || echo "No AAB files anywhere"
+          exit 1
+        fi
 
     - name: 🚀 Upload to Google Play Store Internal Testing
       uses: r0adkll/upload-google-play@v1
       with:
         serviceAccountJson: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
         packageName: ${{ env.PACKAGE_NAME }}
-        releaseFile: build/app/outputs/bundle/release/app-release.aab
+        releaseFile: ${{ steps.find_aab.outputs.aab-file }}
         track: internal
         status: completed
         inAppUpdatePriority: 0 # Optional: 0 for flexible, 5 for immediate
