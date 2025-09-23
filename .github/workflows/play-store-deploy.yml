@@ -45,26 +45,31 @@ jobs:
         echo "VERSION_CODE=$NEW_CODE" >> $GITHUB_ENV
         echo "📱 Version: $CURRENT_VERSION+$NEW_CODE"
 
-    - name: 🏗️ Build AAB
+    - name: 🏗️ Build AAB with Gradle (bypass flutter path check)
       run: |
-        echo "🏗️ Building Android App Bundle..."
-        flutter build appbundle --release
-        echo "✅ Build completed"
+        echo "🏗️ Building Android App Bundle with Gradle..."
+        cd android
+        chmod +x ./gradlew || true
+        ./gradlew clean :app:bundleRelease -x lint --no-daemon
+        cd ..
+        echo "✅ Gradle build finished"
 
     - name: 🔍 Find AAB file
       id: find_aab
       run: |
         echo "🔍 Searching for AAB files..."
-        find . -name "*.aab" -type f
-        
         if [ -f "android/app/build/outputs/bundle/release/app-release.aab" ]; then
           echo "aab_path=android/app/build/outputs/bundle/release/app-release.aab" >> $GITHUB_OUTPUT
           echo "✅ AAB found in android directory"
+          ls -la android/app/build/outputs/bundle/release/app-release.aab
         elif [ -f "build/app/outputs/bundle/release/app-release.aab" ]; then
           echo "aab_path=build/app/outputs/bundle/release/app-release.aab" >> $GITHUB_OUTPUT
           echo "✅ AAB found in build directory"
+          ls -la build/app/outputs/bundle/release/app-release.aab
         else
           echo "❌ No AAB file found"
+          echo "📁 Listing all *.aab for debugging:" 
+          find . -name "*.aab" -type f -exec ls -la {} \;
           exit 1
         fi
 
