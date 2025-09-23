@@ -49,6 +49,7 @@ jobs:
       uses: gradle/gradle-build-action@v2
       with:
         build-root-directory: android
+        gradle-version: 8.6
         arguments: clean :app:bundleRelease -x lint --no-daemon
 
     - name: 🔍 Find AAB file
