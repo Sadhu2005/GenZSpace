@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_core/firebase_core.dart';
 import 'screens/boot_screen.dart';
 import 'theme/app_theme.dart';
 import 'config/app_config.dart';
-import 'firebase_options.dart';
+// import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  try {
-    // Initialize Firebase
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    print('✅ Firebase initialized successfully');
-  } catch (e) {
-    print('❌ Firebase initialization failed: $e');
-    // Continue without Firebase for now
-  }
+  // try {
+  //   // Initialize Firebase
+  //   await Firebase.initializeApp(
+  //     options: DefaultFirebaseOptions.currentPlatform,
+  //   );
+  //   print('✅ Firebase initialized successfully');
+  // } catch (e) {
+  //   print('❌ Firebase initialization failed: $e');
+  //   // Continue without Firebase for now
+  // }
 
   // Print configuration status
   AppConfig.printConfig();

@@ -60,17 +60,33 @@ jobs:
     - name: 🧪 Run Flutter tests
       run: flutter test --coverage
 
-    - name: ⬆️ Get current version
+    - name: ⬆️ Auto-increment version for internal testing
       id: version
       run: |
-        VERSION_NAME=$(grep 'version:' pubspec.yaml | awk '{print $2}' | cut -d'+' -f1)
-        VERSION_CODE=$(grep 'version:' pubspec.yaml | awk '{print $2}' | cut -d'+' -f2)
-        echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
-        echo "VERSION_CODE=$VERSION_CODE" >> $GITHUB_ENV
-        echo "version-name=$VERSION_NAME" >> $GITHUB_OUTPUT
-        echo "version-code=$VERSION_CODE" >> $GITHUB_OUTPUT
-        echo "📱 App Version: $VERSION_NAME"
-        echo "📱 Version Code: $VERSION_CODE"
+        # Get current version
+        CURRENT_VERSION=$(grep 'version:' pubspec.yaml | awk '{print $2}' | cut -d'+' -f1)
+        CURRENT_CODE=$(grep 'version:' pubspec.yaml | awk '{print $2}' | cut -d'+' -f2)
+        
+        # Increment version code for internal testing
+        NEW_CODE=$((CURRENT_CODE + 1))
+        
+        # Update pubspec.yaml with new version code
+        sed -i "s/version: $CURRENT_VERSION+$CURRENT_CODE/version: $CURRENT_VERSION+$NEW_CODE/" pubspec.yaml
+        
+        echo "VERSION_NAME=$CURRENT_VERSION" >> $GITHUB_ENV
+        echo "VERSION_CODE=$NEW_CODE" >> $GITHUB_ENV
+        echo "version-name=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+        echo "version-code=$NEW_CODE" >> $GITHUB_OUTPUT
+        echo "📱 App Version: $CURRENT_VERSION"
+        echo "📱 Version Code: $NEW_CODE (incremented from $CURRENT_CODE)"
+
+    - name: 💾 Commit version changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add pubspec.yaml
+        git commit -m "🚀 Auto-increment version to $CURRENT_VERSION+$NEW_CODE for internal testing" || echo "No changes to commit"
+        git push origin HEAD || echo "Push failed, continuing with build"
 
     - name: 🏗️ Build Android App Bundle (AAB)
       run: |
@@ -99,7 +115,9 @@ jobs:
         releaseFile: build/app/outputs/bundle/release/app-release.aab
         track: internal
         status: completed
-        inAppUpdatePriority: 0
+        inAppUpdatePriority: 1
+        whatsNewDirectory: changelogs
+        mappingFile: android/app/build/outputs/mapping/release/mapping.txt
 
     - name: ✅ Notify Success
       if: success()

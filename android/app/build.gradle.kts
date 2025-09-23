@@ -17,8 +17,12 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.anu.GenZSpace"
-    compileSdk = 35
+    compileSdk = 36
     ndkVersion = "27.0.12077973"
+
+    buildFeatures {
+        buildConfig = true
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

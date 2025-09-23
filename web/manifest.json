@@ -1,11 +1,11 @@
 {
-    "name": "yuva_space",
-    "short_name": "yuva_space",
+    "name": "GenZSpace",
+    "short_name": "GenZSpace",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "GenZSpace - Student-Only Social Network",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
