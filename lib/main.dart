@@ -8,16 +8,8 @@ import 'config/app_config.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // try {
-  //   // Initialize Firebase
-  //   await Firebase.initializeApp(
-  //     options: DefaultFirebaseOptions.currentPlatform,
-  //   );
-  //   print('✅ Firebase initialized successfully');
-  // } catch (e) {
-  //   print('❌ Firebase initialization failed: $e');
-  //   // Continue without Firebase for now
-  // }
+  // Firebase is currently disabled
+  print('ℹ️ Firebase is disabled - running without backend services');
 
   // Print configuration status
   AppConfig.printConfig();
