@@ -123,13 +123,15 @@ jobs:
           exit 1
         fi
         
-    - name: 🚀 Upload to Google Play Store Internal Testing  
+    - name: 🚀 Upload to Google Play Store Internal Testing
       uses: r0adkll/upload-google-play@v1.0.3
       with:
         serviceAccountJson: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
-        packageName: com.anu.GenZSpace  
+        packageName: com.anu.GenZSpace
         releaseFile: android/app/build/outputs/bundle/release/app-release.aab
         track: internal
+      env:
+        ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
     - name: 📱 Verification & Summary
       run: |
