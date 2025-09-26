@@ -13,12 +13,13 @@ env:
 jobs:
   deploy-to-play-store:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     
     steps:
     - name: 📥 Checkout code
       uses: actions/checkout@v3
 
-    - name: ☕ Setup Java
+    - name: ☕ Setup Java 17
       uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
@@ -32,7 +33,13 @@ jobs:
         cache: true
 
     - name: 📦 Get dependencies
-      run: flutter pub get
+      run: |
+        flutter pub get
+        
+    - name: 🔍 Validate Flutter setup
+      run: |
+        flutter doctor -v
+        flutter analyze --no-fatal-infos || echo "⚠️ Analysis completed with warnings"
 
     - name: ⬆️ Auto-increment version
       id: version
@@ -45,30 +52,61 @@ jobs:
         echo "VERSION_CODE=$NEW_CODE" >> $GITHUB_ENV
         echo "📱 Version: $CURRENT_VERSION+$NEW_CODE"
 
-    - name: 🏗️ Build AAB with Gradle (no wrapper required)
+    - name: 🏗️ Build AAB with Gradle
       uses: gradle/gradle-build-action@v2
       with:
         build-root-directory: android
-        gradle-version: 8.6
-        arguments: clean :app:bundleRelease -x lint --no-daemon
+        gradle-version: 8.11
+        arguments: clean :app:bundleRelease -x lint --no-daemon --info
+      continue-on-error: false
 
-    - name: 🔍 Find AAB file
+    - name: ✅ Verify AAB Build Success
+      run: |
+        if [ -f "android/app/build/outputs/bundle/release/app-release.aab" ]; then
+          echo "✅ AAB build completed successfully"
+          ls -lh android/app/build/outputs/bundle/release/app-release.aab
+        else
+          echo "❌ AAB file not found in expected location"
+          exit 1
+        fi
+
+    - name: 🔍 Locate AAB for Upload
       id: find_aab
       run: |
-        echo "🔍 Searching for AAB files..."
-        if [ -f "android/app/build/outputs/bundle/release/app-release.aab" ]; then
-          echo "aab_path=android/app/build/outputs/bundle/release/app-release.aab" >> $GITHUB_OUTPUT
-          echo "✅ AAB found in android directory"
-          ls -la android/app/build/outputs/bundle/release/app-release.aab
-        elif [ -f "build/app/outputs/bundle/release/app-release.aab" ]; then
-          echo "aab_path=build/app/outputs/bundle/release/app-release.aab" >> $GITHUB_OUTPUT
-          echo "✅ AAB found in build directory"
-          ls -la build/app/outputs/bundle/release/app-release.aab
+        echo "🔍 Locating AAB file for upload..."
+        
+        # Check multiple possible locations
+        ANDROID_AAB="android/app/build/outputs/bundle/release/app-release.aab"
+        FLUTTER_AAB="build/app/outputs/bundle/release/app-release.aab"
+        
+        if [ -f "$ANDROID_AAB" ]; then
+          echo "✅ Found AAB: $ANDROID_AAB"
+          echo "aab_path=$ANDROID_AAB" >> $GITHUB_OUTPUT
+          echo "aab_size=$(stat -c%s "$ANDROID_AAB")" >> $GITHUB_OUTPUT
+          ls -lh "$ANDROID_AAB"
+        elif [ -f "$FLUTTER_AAB" ]; then
+          echo "✅ Found AAB: $FLUTTER_AAB"
+          echo "aab_path=$FLUTTER_AAB" >> $GITHUB_OUTPUT
+          echo "aab_size=$(stat -c%s "$FLUTTER_AAB")" >> $GITHUB_OUTPUT
+          ls -lh "$FLUTTER_AAB"
         else
-          echo "❌ No AAB file found"
-          echo "📁 Listing all *.aab for debugging:" 
-          find . -name "*.aab" -type f -exec ls -la {} \;
+          echo "❌ AAB file not found in standard locations"
+          echo "🔍 Debug: Searching all .aab files..."
+          find . -name "*.aab" -type f -exec ls -lh {} \;
+          echo "📂 Checking build directories..."
+          ls -la android/app/build/outputs/bundle/ 2>/dev/null || echo "Android build directory not found"
+          ls -la build/app/outputs/bundle/ 2>/dev/null || echo "Flutter build directory not found"
           exit 1
+        fi
+
+    - name: 🔐 Validate Google Play Credentials
+      run: |
+        if [ -z "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}" ]; then
+          echo "❌ Error: GOOGLE_PLAY_SERVICE_ACCOUNT_JSON secret not configured"
+          echo "🔧 Please add your Google Play Service Account JSON to GitHub secrets"
+          exit 1
+        else
+          echo "✅ Google Play credentials found"
         fi
 
     - name: 🚀 Upload to Google Play Store Internal Testing
@@ -81,11 +119,57 @@ jobs:
         status: completed
         inAppUpdatePriority: 1
 
-    - name: ✅ Success
+    - name: 📱 Verification & Summary
       run: |
-        echo "🎉 GenZSpace deployed to Google Play Store Internal Testing!"
-        echo "📱 Package: ${{ env.PACKAGE_NAME }}"
-        echo "📊 Version: ${{ env.VERSION_NAME }} (${{ env.VERSION_CODE }})"
+        echo ""
+        echo "🎉 =========================================="
+        echo "🚀 GenZSpace Successfully Deployed!"
+        echo "==========================================="
+        echo "📱 App: GenZSpace"
+        echo "📦 Package: ${{ env.PACKAGE_NAME }}"
+        echo "🆕 Version: ${{ env.VERSION_NAME }} (${{ env.VERSION_CODE }})"
+        echo "📁 AAB Size: ${{ steps.find_aab.outputs.aab_size }} bytes"
         echo "🎯 Track: Internal Testing"
-        echo "📱 Your app will be available for testing in a few minutes!"
-        echo "🔗 Go to Google Play Store and search for 'GenZSpace'"
+        echo "==========================================="
+        echo ""
+        echo "📱 How to test on your phone:"
+        echo "1. Open Google Play Store"
+        echo "2. Search for 'GenZSpace'"
+        echo "3. Look for 'Internal testing' version"
+        echo "4. Install/Update the app"
+        echo ""
+        echo "⏱️ Wait 5-10 minutes for processing"
+        echo "✅ Check Google Play Console for upload status"
+        echo "==========================================="
+
+    - name: 💬 Upload Success Notification
+      if: success()
+      run: |
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## 🚀 GenZSpace Deployed Successfully!" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "Your app is now available for **Internal Testing**!" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📱 Testing Instructions:" >> $GITHUB_STEP_SUMMARY
+        echo "1. Open Google Play Store on your phone" >> $GITHUB_STEP_SUMMARY
+        echo "2. Search for **GenZSpace**" >> $GITHUB_STEP_SUMMARY
+        echo "3. Download/Update from Internal Testing track" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📊 Release Details:" >> $GITHUB_STEP_SUMMARY
+        echo "- **Version**: ${{ env.VERSION_NAME }} (${{ env.VERSION_CODE }})" >> $GITHUB_STEP_SUMMARY
+        echo "- **Package**: ${{ env.PACKAGE_NAME }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Status**: Ready for testing" >> $GITHUB_STEP_SUMMARY
+        echo "- **Track**: Internal Testing" >> $GITHUB_STEP_SUMMARY
+
+    - name: ❌ Upload Failed Notification
+      if: failure()
+      run: |
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## ❌ Deployment Failed" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "Please check the logs above for errors and try again." >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Common issues:" >> $GITHUB_STEP_SUMMARY
+        echo "- Invalid Google Play Service Account JSON" >> $GITHUB_STEP_SUMMARY
+        echo "- Package name mismatch" >> $GITHUB_STEP_SUMMARY
+        echo "- Build failures" >> $GITHUB_STEP_SUMMARY
