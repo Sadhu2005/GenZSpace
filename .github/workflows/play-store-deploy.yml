@@ -123,6 +123,12 @@ jobs:
           exit 1
         fi
         
+    - name: 🔑 Save Service Account JSON Safely
+      run: |
+        echo '${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}' | base64 -d > service_account.json 2>/dev/null || echo '${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}' > service_account.json
+        echo "✅ Service Account JSON saved"
+        echo "📄 File info: $(ls -lh service_account.json)"
+        
     - name: 🚀 Upload to Google Play Store Internal Testing
       uses: r0adkll/upload-google-play@v1.0.3
       with:
@@ -132,6 +138,7 @@ jobs:
         track: internal
       env:
         ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+        GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/service_account.json
 
     - name: 📱 Verification & Summary
       run: |
