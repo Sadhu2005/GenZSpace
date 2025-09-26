@@ -101,23 +101,12 @@ jobs:
 
     - name: 🔐 Validate Google Play Credentials
       run: |
-        echo "🔍 Checking Google Play credentials..."
-        
         if [ -z "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}" ]; then
           echo "❌ Error: GOOGLE_PLAY_SERVICE_ACCOUNT_JSON secret not configured"
-          echo "🔧 Steps to fix:"
-          echo "   1. Go to GitHub repository Settings"
-          echo "   2. Click 'Secrets and variables' → 'Actions'"
-          echo "   3. Add new repository secret:"
-          echo "      Name: GOOGLE_PLAY_SERVICE_ACCOUNT_JSON"
-          echo "      Value: [Your Service Account JSON]"
+          echo "🔧 Please add your Google Play Service Account JSON to GitHub secrets"
           exit 1
         else
           echo "✅ Google Play credentials found"
-          # Validate JSON format
-          echo "🔐 Credentials JSON preview (first 100 chars):"
-          echo "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}" | head -c 100
-          echo ""
         fi
 
     - name: 📄 Verify AAB File Path
@@ -134,15 +123,13 @@ jobs:
           exit 1
         fi
         
-    - name: 🚀 Upload to Google Play Store Internal Testing
-      uses: r0adkll/upload-google-play@v1.1.0
+    - name: 🚀 Upload to Google Play Store Internal Testing  
+      uses: r0adkll/upload-google-play@v1.0.3
       with:
         serviceAccountJson: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
-        packageName: ${{ env.PACKAGE_NAME }}
-        releaseFiles: ${{ steps.find_aab.outputs.aab_path }}
+        packageName: com.anu.GenZSpace  
+        releaseFile: android/app/build/outputs/bundle/release/app-release.aab
         track: internal
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: 📱 Verification & Summary
       run: |
