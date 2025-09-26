@@ -104,20 +104,22 @@ jobs:
         if [ -z "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}" ]; then
           echo "❌ Error: GOOGLE_PLAY_SERVICE_ACCOUNT_JSON secret not configured"
           echo "🔧 Please add your Google Play Service Account JSON to GitHub secrets"
+          echo "💡 Go to Settings > Secrets > Actions > Add repository secret"
           exit 1
         else
           echo "✅ Google Play credentials found"
+          echo "📦 JSON length: ${#{{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}}"
         fi
 
     - name: 🚀 Upload to Google Play Store Internal Testing
-      uses: r0adkll/upload-google-play@v1.0.3
+      uses: r0adkll/upload-google-play@v1.1.0
       with:
         serviceAccountJson: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
         packageName: ${{ env.PACKAGE_NAME }}
         releaseFile: ${{ steps.find_aab.outputs.aab_path }}
         track: internal
-        status: completed
-        inAppUpdatePriority: 1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: 📱 Verification & Summary
       run: |
