@@ -111,6 +111,20 @@ jobs:
           echo "✅ Google Play credentials found"
         fi
 
+    - name: 📄 Verify AAB File Path
+      run: |
+        echo "🔍 Checking AAB file path..."
+        echo "AAB path: ${{ steps.find_aab.outputs.aab_path }}"
+        if [ -f "${{ steps.find_aab.outputs.aab_path }}" ]; then
+          echo "✅ AAB file found and verified!"
+          ls -lh "${{ steps.find_aab.outputs.aab_path }}"
+        else
+          echo "❌ ERROR: AAB file not found at specified path!"
+          echo "Searching for any .aab files..."
+          find . -name "*.aab" -exec ls -lh {} \;
+          exit 1
+        fi
+        
     - name: 🚀 Upload to Google Play Store Internal Testing
       uses: r0adkll/upload-google-play@v1.1.0
       with:
