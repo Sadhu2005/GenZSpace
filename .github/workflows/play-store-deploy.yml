@@ -99,8 +99,9 @@ jobs:
           exit 1
         fi
 
-    - name: 🔐 Validate Google Play Credentials
+    - name: 🔐 Validate Google Play Credentials  
       run: |
+        # Simple check for service account JSON existence
         if [ -z "${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}" ]; then
           echo "❌ Error: GOOGLE_PLAY_SERVICE_ACCOUNT_JSON secret not configured"
           echo "🔧 Please add your Google Play Service Account JSON to GitHub secrets"
@@ -108,7 +109,6 @@ jobs:
           exit 1
         else
           echo "✅ Google Play credentials found"
-          echo "📦 JSON length: ${#{{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}}"
         fi
 
     - name: 🚀 Upload to Google Play Store Internal Testing
